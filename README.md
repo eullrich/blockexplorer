@@ -66,7 +66,7 @@ Create an empty `.env` file in the base directory of this project.
 Add the following line to the `.env` file replacing `YOUR_ALCHEMY_API_KEY` with your api key.
 
 ```sh
-REACT_APP_ALCHEMY_API_KEY=YOUR_ALCHEMY_API_KEY
+REACT_APP_ALCHEMY_API_KEY=nmEqbjrk2NZ2ua7n_bKroxhyfwgFl3pP
 ```
 
 Do not remove the `REACT_APP_` prefix. React uses that to import env variables.
