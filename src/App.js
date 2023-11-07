@@ -13,6 +13,7 @@ const alchemy = new Alchemy(settings);
 function App() {
   const [blockNumber, setBlockNumber] = useState();
   const [blockTransactions, setBlockTransactions] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   useEffect(() => {
     async function getBlockNumber() {
@@ -26,19 +27,19 @@ function App() {
     getBlockNumber();
   }, []);
 
-  // New function to get block transactions
   async function getBlockTransactions(blockNumber) {
     try {
       const blockData = await alchemy.core.getBlockWithTransactions(blockNumber);
-
-      // Extract the transactions from the block data
       const transactions = blockData.transactions;
-
       setBlockTransactions(transactions);
     } catch (error) {
       console.error('Error fetching block transactions:', error);
     }
   }
+
+  const handleTransactionClick = (transaction) => {
+    setSelectedTransaction(transaction);
+  };
 
   return (
     <div className="App">
@@ -47,10 +48,20 @@ function App() {
         <h2>Block Transactions:</h2>
         <ul>
           {blockTransactions.map((transaction, index) => (
-            <li key={index}>{transaction.hash}</li>
+            <li key={index}>
+              <button onClick={() => handleTransactionClick(transaction)}>
+                View Transaction {index + 1}
+              </button>
+            </li>
           ))}
         </ul>
       </div>
+      {selectedTransaction && (
+        <div>
+          <h2>Selected Transaction Details:</h2>
+          <pre>{JSON.stringify(selectedTransaction, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
