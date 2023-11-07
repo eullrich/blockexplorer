@@ -3,34 +3,56 @@ import { useEffect, useState } from 'react';
 
 import './App.css';
 
-// Refer to the README doc for more information about using API
-// keys in client-side code. You should never do this in production
-// level code.
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
   network: Network.ETH_MAINNET,
 };
 
-
-// In this week's lessons we used ethers.js. Here we are using the
-// Alchemy SDK is an umbrella library with several different packages.
-//
-// You can read more about the packages here:
-//   https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
 const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [blockTransactions, setBlockTransactions] = useState([]);
 
   useEffect(() => {
     async function getBlockNumber() {
-      setBlockNumber(await alchemy.core.getBlockNumber());
+      const blockNumber = await alchemy.core.getBlockNumber();
+      setBlockNumber(blockNumber);
+
+      // Call the function to get block transactions
+      getBlockTransactions(blockNumber);
     }
 
     getBlockNumber();
-  });
+  }, []);
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  // New function to get block transactions
+  async function getBlockTransactions(blockNumber) {
+    try {
+      const blockData = await alchemy.core.getBlockWithTransactions(blockNumber);
+
+      // Extract the transactions from the block data
+      const transactions = blockData.transactions;
+
+      setBlockTransactions(transactions);
+    } catch (error) {
+      console.error('Error fetching block transactions:', error);
+    }
+  }
+
+  return (
+    <div className="App">
+      <div>Block Number: {blockNumber}</div>
+      <div>
+        <h2>Block Transactions:</h2>
+        <ul>
+          {blockTransactions.map((transaction, index) => (
+            <li key={index}>{transaction.hash}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default App;
